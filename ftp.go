@@ -11,6 +11,7 @@ import (
 	"io"
 	"net"
 	"net/textproto"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -608,6 +609,14 @@ func (c *ServerConn) cmd(expected int, format string, args ...interface{}) (int,
 	}
 
 	return c.conn.ReadResponse(expected)
+}
+
+func (c *ServerConn) Chmod(path string, mode os.FileMode) error {
+	_, _, err := c.cmd(StatusPathCreated, "SITE CHMOD %o %s", mode, path)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // cmdDataConnFrom executes a command which require a FTP data connection.
